@@ -46,6 +46,7 @@ func main() {
 		printErrorAndExit(errors.Errorf("Error decoding mining address: %s", err))
 	}
 
+	log.Infof("==mining rpc-server: %+v to mingint-addr: %+v", client.cfg.RPCServer, cfg.MiningAddr)
 	doneChan := make(chan struct{})
 	spawn("mineLoop", func() {
 		err = mineLoop(client, cfg.NumberOfBlocks, *cfg.TargetBlocksPerSecond, cfg.MineWhenNotSynced, miningAddr)

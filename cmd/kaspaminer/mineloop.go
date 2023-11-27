@@ -2,10 +2,12 @@ package main
 
 import (
 	nativeerrors "errors"
-	"github.com/kaspanet/kaspad/version"
+	"fmt"
 	"math/rand"
 	"sync/atomic"
 	"time"
+
+	"github.com/kaspanet/kaspad/version"
 
 	"github.com/kaspanet/kaspad/app/appmessage"
 	"github.com/kaspanet/kaspad/cmd/kaspaminer/templatemanager"
@@ -110,7 +112,7 @@ func logHashRate() {
 
 func handleFoundBlock(client *minerClient, block *externalapi.DomainBlock) error {
 	blockHash := consensushashing.BlockHash(block)
-	log.Infof("Submitting block %s to %s", blockHash, client.Address())
+	log.Infof("Submitting block %s to %s block-detail: %#v", blockHash, client.Address(), block)
 
 	rejectReason, err := client.SubmitBlock(block)
 	if err != nil {
@@ -206,6 +208,7 @@ func templatesLoop(client *minerClient, miningAddr util.Address, errChan chan er
 			errChan <- errors.Wrapf(err, "Error getting block template from %s", client.Address())
 			return
 		}
+		fmt.Printf("====got block-template: %+v, block: %#v \n", template, template.Block)
 		err = templatemanager.Set(template)
 		if err != nil {
 			errChan <- errors.Wrapf(err, "Error setting block template from %s", client.Address())
