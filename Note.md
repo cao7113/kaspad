@@ -1,3 +1,15 @@
+# Notes
+
+## try devnet locally
+
+参 Taskfile.yml
+
+- 单独启动 kaspad, kaspaminer, kaspawallet start-daemon 几个进程， 后边可尝试用 Procfile 管理
+- mining 时 coinbase 费用 会自动打到 miningAddr 里
+
+## Try subnetwork and payload
+
+```
 EnableNonNativeSubnetworks=true
 
 2023-11-27 16:32:14.231 [CRT] RPCS: Exiting: Fatal error in goroutine `routerInitializer-handleIncomingMessages 6`: We currently don't support non native subnetworks
@@ -10,3 +22,8 @@ github.com/kaspanet/kaspad/domain/miningmanager.(*miningManager).GetBlockTemplat
 github.com/kaspanet/kaspad/app/rpc/rpchandlers.HandleGetBlockTemplate(0x140080db3b0, 0x140002fa180?, {0x100c29ff0?, 0x14015380fc0})
 /Users/rj/dev/kaspa-net/kaspad/app/rpc/rpchandlers/get_block_template.go:32 +0x21c
 github.com/kaspanet/kaspad/app/rpc.(\*Manager).handleIncomingMessages(0x140081b9218, 0x140081da5a0, 0x10?)
+```
+
+## Useful links
+
+[Codebase orverviw](https://github.com/kaspanet/docs/blob/main/Reference/Codebase%20Overview.md)

@@ -1,28 +1,38 @@
 # https://taskfile.dev
 version: "3"
 tasks:
-  run:
-    cmds:
-      - kaspad --rpclisten=":26110" --listen=":26111"
-
   build: go install . ./cmd/...
-  build-wallet: go install ./cmd/kaspawallet
-  run-wallet:
-    deps:
-      - build-wallet
-    cmds:
-      - kaspawallet start-daemon
-
-  send: kaspawallet send -t kaspa:qq2fjsr65u7hmnarff53hk0fd9d9jcf4388qx4j0t3g4hy3kzsc9sehjjhdt6 -v 0.001 -s --payload "6869" -p test
 
   mine: kaspaminer --miningaddr=kaspa:qpmzw0q8j59hrsqhp0h3w39vt3h8dnpxd7707xxqg9hjwnl7uuctw9fmzjxz7
 
   ## local devnet
   # --utxoindex 钱包服务(如查余额时)需要;  --reset-db 切换network时；  --outpeers=0 --maxinpeers=0
-  # dev-net: kaspad --devnet --loglevel=trace --utxoindex
   dev-net: kaspad --devnet --loglevel=trace --utxoindex --allow-submit-block-when-not-synced
-  # --numblocks=3
   dev-mine: kaspaminer --devnet --miningaddr=kaspadev:qr4pa7n3r9keuhqrk06c6rwwlx3wf2c204qc38yvy9q4a6xgmygx7pu6mljn7 --mine-when-not-synced
   dev-wallet: kaspawallet --devnet start-daemon
   dev-balance: kaspawallet --devnet balance -v
   dev-send: kaspawallet --devnet send -t kaspadev:qr4pa7n3r9keuhqrk06c6rwwlx3wf2c204qc38yvy9q4a6xgmygx7pu6mljn7 -v 0.001 -s --payload "6869" -p test --devnet
+
+  ## How to modify proto file and rebuild
+  build-wallet:
+    # deps: set-go-grpc
+    cmds:
+      - |
+        cd cmd/kaspawallet/daemon/pb
+        go generate
+        cd ../..
+        go install .
+        # go install ./cmd/kaspawallet
+        echo built kaspa-wallet
+
+  ## Set up
+  set-go-grpc:
+    desc: https://grpc.io/docs/languages/go/quickstart/#prerequisites
+    cmds:
+      - |
+        brew install protobuf
+        protoc --version
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+        # export PATH="$PATH:$(go env GOPATH)/bin"
+        ls -al $(go env GOPATH)/bin
